@@ -1,0 +1,654 @@
+pioner@vm-ubuntu-lab-johsgun:~$ uname -a
+Linux vm-ubuntu-lab-johsgun 6.17.0-1008-azure #8~24.04.1-Ubuntu SMP Mon Jan 26 18:35:40 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+pioner@vm-ubuntu-lab-johsgun:~$ cat /etc/os-release 
+PRETTY_NAME="Ubuntu 24.04.4 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.4 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+pioner@vm-ubuntu-lab-johsgun:~$ whoami
+pioner
+pioner@vm-ubuntu-lab-johsgun:~$ id
+uid=1000(pioner) gid=1000(pioner) groups=1000(pioner),4(adm),24(cdrom),27(sudo),30(dip),105(lxd)
+pioner@vm-ubuntu-lab-johsgun:~$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           7.8Gi       524Mi       7.1Gi       4.0Mi       365Mi       7.2Gi
+Swap:             0B          0B          0B
+pioner@vm-ubuntu-lab-johsgun:~$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root        29G  2.7G   26G  10% /
+tmpfs           3.9G     0  3.9G   0% /dev/shm
+tmpfs           1.6G  988K  1.6G   1% /run
+tmpfs           5.0M     0  5.0M   0% /run/lock
+efivarfs        128M   26K  128M   1% /sys/firmware/efi/efivars
+/dev/sda16      881M  115M  704M  15% /boot
+/dev/sda15      105M  6.2M   99M   6% /boot/efi
+/dev/sdb1        16G   28K   15G   1% /mnt
+tmpfs           795M   12K  795M   1% /run/user/1000
+pioner@vm-ubuntu-lab-johsgun:~$ uptime
+ 06:53:02 up 11 min,  1 user,  load average: 0.00, 0.02, 0.00
+pioner@vm-ubuntu-lab-johsgun:~$ mkdir -p ~/sys-admin-lab
+pioner@vm-ubuntu-lab-johsgun:~$ cd ~/sys-admin-lab
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat > system-info.txt << 'EOF'
+> === System Information ===
+OS: $(cat /etc/os-release | grep PRETTY_NAME)
+Kernel: $(uname -r)
+Architecture: $(uname -m)
+Current User: $(whoami)
+Home Directory: $HOME
+> EOF
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ chmnod +x system-info.txt 
+Command 'chmnod' not found, did you mean:
+  command 'chmod' from deb coreutils (9.4-3ubuntu6.1)
+Try: sudo apt install <deb name>
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ chmod +x system-info.txt 
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ls
+system-info.txt
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ bash system-info.txt > system-report.txt
+system-info.txt: line 1: ===: command not found
+system-info.txt: line 2: OS:: command not found
+system-info.txt: line 3: Kernel:: command not found
+system-info.txt: line 4: Architecture:: command not found
+system-info.txt: line 5: Current: command not found
+system-info.txt: line 6: Home: command not found
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat system-report.txt 
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat system-
+system-info.txt    system-report.txt  
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat system-info.txt 
+=== System Information ===
+OS: $(cat /etc/os-release | grep PRETTY_NAME)
+Kernel: $(uname -r)
+Architecture: $(uname -m)
+Current User: $(whoami)
+Home Directory: $HOME
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ls
+system-info.txt  system-report.txt
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ rm -rf system-report.txt 
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ rm -rf system-info.txt 
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat > system-info.sh << EOF
+#!/bin/bash
+echo "=== System Information ==="
+echo "OS: $(grep PRETTY_NAME /etc/os-release)"
+echo "Kernel: $(uname -r)"
+echo "Architecture: $(uname -m)"
+echo "Current User: $(whoami)"
+echo "Home Directory: $HOME"
+EOF
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ chmod +x system-info.sh
+./system-info.sh > system-report.txt
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ls
+system-info.sh  system-report.txt
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat system-
+cat: system-: No such file or directory
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat system-report.txt 
+=== System Information ===
+OS: PRETTY_NAME=Ubuntu 24.04.4 LTS
+Kernel: 6.17.0-1008-azure
+Architecture: x86_64
+Current User: pioner
+Home Directory: /home/pioner
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ which apt yum dnf pacman zypper 2>/dev/null || echo "Package manager not found"
+/usr/bin/apt
+Package manager not found
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ sudo apt update
+Hit:1 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+Get:2 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Get:3 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Get:4 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Get:5 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1806 kB]
+Get:6 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [332 kB]
+Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [177 kB]
+Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 c-n-f Metadata [16.7 kB]
+Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1564 kB]
+Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [318 kB]
+Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [386 kB]
+Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+Get:14 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [7300 B]
+Get:15 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [10.5 kB]
+Get:16 http://azure.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [216 B]
+Get:17 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+Get:18 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [21.5 kB]
+Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [74.2 kB]
+Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]
+Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [212 B]
+Fetched 5094 kB in 3s (1783 kB/s)                      
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+3 packages can be upgraded. Run 'apt list --upgradable' to see them.
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ apt search htop 2>/dev/null
+Sorting... Done
+Full Text Search... Done
+aha/noble 0.5.1-3build1 amd64
+  ANSI color to HTML converter
+
+bashtop/noble 0.9.25-1 all
+  Resource monitor that shows usage and stats
+
+bpytop/noble 1.0.68-2 all
+  Resource monitor that shows usage and stats
+
+btm/noble 0.9.6-4 amd64
+  customizable graphical process/system monitor for the terminal
+
+btop/noble 1.3.0-1 amd64
+  Modern and colorful command line resource monitor that shows usage and stats
+
+htop/noble,now 3.3.0-4build1 amd64 [installed,automatic]
+  interactive processes viewer
+
+libauthen-oath-perl/noble 2.0.1-2 all
+  Perl module for OATH One Time Passwords
+
+pftools/noble 3.2.12-1 amd64
+  build and search protein and DNA generalized profiles
+
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ sudo apt install htop -y 2>/dev/null 
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+htop is already the newest version (3.3.0-4build1).
+htop set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ which htop
+htop --version
+/usr/bin/htop
+htop 3.3.0
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ sudo apt install curl wget tree -y 2>/dev/null
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (8.5.0-2ubuntu10.7).
+curl set to manually installed.
+wget is already the newest version (1.21.4-1ubuntu4.1).
+wget set to manually installed.
+The following NEW packages will be installed:
+  tree
+0 upgraded, 1 newly installed, 0 to remove and 3 not upgraded.
+Need to get 47.4 kB of archives.
+After this operation, 111 kB of additional disk space will be used.
+Get:1 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 tree amd64 2.1.1-2ubuntu3.24.04.2 [47.4 kB]
+Fetched 47.4 kB in 1s (63.4 kB/s)
+Selecting previously unselected package tree.
+(Reading database ... 104576 files and directories currently installed.)
+Preparing to unpack .../tree_2.1.1-2ubuntu3.24.04.2_amd64.deb ...
+Unpacking tree (2.1.1-2ubuntu3.24.04.2) ...
+Setting up tree (2.1.1-2ubuntu3.24.04.2) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ curl --version | head -1
+curl 8.5.0 (x86_64-pc-linux-gnu) libcurl/8.5.0 OpenSSL/3.0.13 zlib/1.3 brotli/1.1.0 zstd/1.5.5 libidn2/2.3.7 libpsl/0.21.2 (+libidn2/2.3.7) libssh/0.10.6/openssl/zlib nghttp2/1.59.0 librtmp/2.3 OpenLDAP/2.6.10
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ wget --version | head -1
+tree --version
+GNU Wget 1.21.4 built on linux-gnu.
+tree v2.1.1 © 1996 - 2023 by Steve Baker, Thomas Moore, Francesc Rocher, Florian Sesser, Kyosuke Tokoro
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ dpkg -l | head -10 2>/dev/null
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
+|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
+||/ Name                                     Version                                 Architecture Description
++++-========================================-=======================================-============-================================================================================
+ii  adduser                                  3.137ubuntu1                            all          add and remove users and groups
+ii  apparmor                                 4.0.1really4.0.1-0ubuntu0.24.04.5       amd64        user-space parser utility for AppArmor
+ii  apport                                   2.28.1-0ubuntu3.8                       all          automatically generate crash reports for debugging
+ii  apport-core-dump-handler                 2.28.1-0ubuntu3.8                       all          Kernel core dump handler for Apport
+ii  apport-symptoms                          0.25                                    all          symptom scripts for apport
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ dpkg -l | grep htop 2>/dev/null
+ii  htop                                     3.3.0-4build1                           amd64        interactive processes viewer
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ dpkg -l | head 2>/dev/null 
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
+|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
+||/ Name                                     Version                                 Architecture Description
++++-========================================-=======================================-============-================================================================================
+ii  adduser                                  3.137ubuntu1                            all          add and remove users and groups
+ii  apparmor                                 4.0.1really4.0.1-0ubuntu0.24.04.5       amd64        user-space parser utility for AppArmor
+ii  apport                                   2.28.1-0ubuntu3.8                       all          automatically generate crash reports for debugging
+ii  apport-core-dump-handler                 2.28.1-0ubuntu3.8                       all          Kernel core dump handler for Apport
+ii  apport-symptoms                          0.25                                    all          symptom scripts for apport
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ps aux | head -10
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.1  22616 14248 ?        Ss   06:41   0:02 /sbin/init
+root           2  0.0  0.0      0     0 ?        S    06:41   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        S    06:41   0:00 [pool_workqueue_release]
+root           4  0.0  0.0      0     0 ?        I<   06:41   0:00 [kworker/R-rcu_gp]
+root           5  0.0  0.0      0     0 ?        I<   06:41   0:00 [kworker/R-sync_wq]
+root           6  0.0  0.0      0     0 ?        I<   06:41   0:00 [kworker/R-kvfree_rcu_reclaim]
+root           7  0.0  0.0      0     0 ?        I<   06:41   0:00 [kworker/R-slub_flushwq]
+root           8  0.0  0.0      0     0 ?        I<   06:41   0:00 [kworker/R-netns]
+root          10  0.0  0.0      0     0 ?        I<   06:41   0:00 [kworker/0:0H-events_highpri]
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ps auxf | head -20
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           2  0.0  0.0      0     0 ?        S    06:41   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        S    06:41   0:00  \_ [pool_workqueue_release]
+root           4  0.0  0.0      0     0 ?        I<   06:41   0:00  \_ [kworker/R-rcu_gp]
+root           5  0.0  0.0      0     0 ?        I<   06:41   0:00  \_ [kworker/R-sync_wq]
+root           6  0.0  0.0      0     0 ?        I<   06:41   0:00  \_ [kworker/R-kvfree_rcu_reclaim]
+root           7  0.0  0.0      0     0 ?        I<   06:41   0:00  \_ [kworker/R-slub_flushwq]
+root           8  0.0  0.0      0     0 ?        I<   06:41   0:00  \_ [kworker/R-netns]
+root          10  0.0  0.0      0     0 ?        I<   06:41   0:00  \_ [kworker/0:0H-events_highpri]
+root          11  0.0  0.0      0     0 ?        I    06:41   0:00  \_ [kworker/u8:0-events_unbound]
+root          13  0.0  0.0      0     0 ?        I<   06:41   0:00  \_ [kworker/R-mm_percpu_wq]
+root          14  0.0  0.0      0     0 ?        S    06:41   0:00  \_ [ksoftirqd/0]
+root          15  0.0  0.0      0     0 ?        I    06:41   0:00  \_ [rcu_sched]
+root          16  0.0  0.0      0     0 ?        S    06:41   0:00  \_ [rcu_exp_par_gp_kthread_worker/0]
+root          17  0.0  0.0      0     0 ?        S    06:41   0:00  \_ [rcu_exp_gp_kthread_worker]
+root          18  0.0  0.0      0     0 ?        S    06:41   0:00  \_ [migration/0]
+root          19  0.0  0.0      0     0 ?        S    06:41   0:00  \_ [idle_inject/0]
+root          20  0.0  0.0      0     0 ?        S    06:41   0:00  \_ [cpuhp/0]
+root          21  0.0  0.0      0     0 ?        S    06:41   0:00  \_ [cpuhp/1]
+root          22  0.0  0.0      0     0 ?        S    06:41   0:00  \_ [idle_inject/1]
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ps ux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+pioner      1178  0.0  0.1  20232 11560 ?        Ss   06:44   0:00 /usr/lib/systemd/systemd --user
+pioner      1179  0.0  0.0  21164  3576 ?        S    06:44   0:00 (sd-pam)
+pioner      1307  0.0  0.0  15036  7308 ?        S    06:44   0:01 sshd: pioner@pts/0
+pioner      1310  0.0  0.0   9200  5596 pts/0    Ss   06:44   0:00 -bash
+pioner      2376  0.0  0.0  11328  4536 pts/0    R+   07:52   0:00 ps ux
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ps aux | grep -E "(bash|ssh|systemd)"
+root         131  0.0  0.2  66828 17840 ?        S<s  06:41   0:00 /usr/lib/systemd/systemd-journald
+root         195  0.0  0.0  25720  7776 ?        Ss   06:41   0:00 /usr/lib/systemd/systemd-udevd
+systemd+     516  0.0  0.1  21600 13444 ?        Ss   06:41   0:00 /usr/lib/systemd/systemd-resolved
+systemd+     683  0.0  0.1  19140  9936 ?        Ss   06:41   0:00 /usr/lib/systemd/systemd-networkd
+message+     791  0.0  0.0   9788  5652 ?        Ss   06:41   0:00 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+root         808  0.0  0.1  17996  8932 ?        Ss   06:41   0:00 /usr/lib/systemd/systemd-logind
+root        1172  0.0  0.1  12032  8380 ?        Ss   06:44   0:00 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+root        1173  0.0  0.1  14876 10616 ?        Ss   06:44   0:00 sshd: pioner [priv]
+pioner      1178  0.0  0.1  20232 11560 ?        Ss   06:44   0:00 /usr/lib/systemd/systemd --user
+pioner      1307  0.0  0.0  15036  7308 ?        S    06:44   0:01 sshd: pioner@pts/0
+pioner      1310  0.0  0.0   9200  5596 pts/0    Ss   06:44   0:00 -bash
+pioner      2378  0.0  0.0   7088  2296 pts/0    S+   07:52   0:00 grep --color=auto -E (bash|ssh|systemd)
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ top -n 5
+
+top - 07:53:17 up  1:11,  1 user,  load average: 0.01, 0.03, 0.00
+Tasks: 134 total,   1 running, 133 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.2 us,  0.2 sy,  0.0 ni, 99.5 id,  0.2 wa,  0.0 hi,  0.0 si,  0.0 st 
+MiB Mem :   7942.5 total,   6884.5 free,    540.1 used,    774.3 buff/cache     
+MiB Swap:      0.0 total,      0.0 free,      0.0 used.   7402.4 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                                                                
+   1307 pioner    20   0   15036   7308   5340 S   0.7   0.1   0:01.29 sshd                                                                                   
+    912 _chrony   20   0   11216   3840   3116 S   0.3   0.0   0:01.51 chronyd                                                                                
+   1076 root      20   0  412596  36392  12992 S   0.3   0.4   0:04.00 python3                                                                                
+      1 root      20   0   22616  14248   9932 S   0.0   0.2   0:02.87 systemd                                                                                
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.00 kthreadd                                                                               
+      3 root      20   0       0      0      0 S   0.0   0.0   0:00.00 pool_workqueue_release                                                                 
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-rcu_gp                                                                       
+      5 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-sync_wq                                                                      
+      6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-kvfree_rcu_reclaim                                                           
+      7 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-slub_flushwq                                                                 
+      8 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-netns                                                                        
+     10 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/0:0H-events_highpri                                                            
+     11 root      20   0       0      0      0 I   0.0   0.0   0:00.42 kworker/u8:0-events_power_efficient                                                    
+     13 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-mm_percpu_wq                                                                 
+     14 root      20   0       0      0      0 S   0.0   0.0   0:00.02 ksoftirqd/0                                                                            
+     15 root      20   0       0      0      0 I   0.0   0.0   0:00.19 rcu_sched                                                                              
+     16 root      20   0       0      0      0 S   0.0   0.0   0:00.00 rcu_exp_par_gp_kthread_worker/0                                                        
+     17 root      20   0       0      0      0 S   0.0   0.0   0:00.00 rcu_exp_gp_kthread_worker                                                              
+     18 root      rt   0       0      0      0 S   0.0   0.0   0:00.02 migration/0                                                                            
+     19 root     -51   0       0      0      0 S   0.0   0.0   0:00.00 idle_inject/0                                                                          
+     20 root      20   0       0      0      0 S   0.0   0.0   0:00.00 cpuhp/0                                                                                
+     21 root      20   0       0      0      0 S   0.0   0.0   0:00.00 cpuhp/1                                                                                
+     22 root     -51   0       0      0      0 S   0.0   0.0   0:00.00 idle_inject/1                                                                          
+     23 root      rt   0       0      0      0 S   0.0   0.0   0:00.02 migration/1                                                                            
+     24 root      20   0       0      0      0 S   0.0   0.0   0:00.05 ksoftirqd/1                                                                            
+     26 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/1:0H-events_highpri                                                            
+     27 root      20   0       0      0      0 S   0.0   0.0   0:00.00 kdevtmpfs                                                                              
+     28 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-inet_frag_wq                                                                 
+     29 root      20   0       0      0      0 I   0.0   0.0   0:00.00 rcu_tasks_rude_kthread                                                                 
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ pstree | head -20
+systemd-+-ModemManager---3*[{ModemManager}]
+        |-2*[agetty]
+        |-chronyd---chronyd
+        |-cron
+        |-dbus-daemon
+        |-hv_kvp_daemon
+        |-multipathd---6*[{multipathd}]
+        |-networkd-dispat
+        |-packagekitd---3*[{packagekitd}]
+        |-polkitd---3*[{polkitd}]
+        |-python3---python3---5*[{python3}]
+        |-rsyslogd---3*[{rsyslogd}]
+        |-sshd---sshd---sshd---bash-+-head
+        |                           `-pstree
+        |-systemd---(sd-pam)
+        |-systemd-journal
+        |-systemd-logind
+        |-systemd-network
+        |-systemd-resolve
+        |-systemd-udevd
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ sleep 300 &
+[1] 2382
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ jobs
+[1]+  Running                 sleep 300 &
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ fg %1
+sleep 300
+^C
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ sleep 200 &
+[1] 2383
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ kill %1
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ jobs
+[1]+  Terminated              sleep 200
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ systemctl list-units --type=service | head -10
+  UNIT                                                        LOAD   ACTIVE SUB     DESCRIPTION
+  apparmor.service                                            loaded active exited  Load AppArmor profiles
+  apport.service                                              loaded active exited  automatic crash report generation
+  blk-availability.service                                    loaded active exited  Availability of block devices
+  chrony.service                                              loaded active running chrony, an NTP client/server
+  cloud-config.service                                        loaded active exited  Cloud-init: Config Stage
+  cloud-final.service                                         loaded active exited  Cloud-init: Final Stage
+  cloud-init-local.service                                    loaded active exited  Cloud-init: Local Stage (pre-network)
+  cloud-init.service                                          loaded active exited  Cloud-init: Network Stage
+  console-setup.service                                       loaded active exited  Set console font and keymap
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ systemctl status ssh 2>/dev/null || systemctl status sshd 2>/dev/null
+systemctl status networking 2>/dev/null || systemctl status NetworkManager 2>/dev/null
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/usr/lib/systemd/system/ssh.service; disabled; preset: enabled)
+     Active: active (running) since Sun 2026-03-08 06:44:39 UTC; 1h 10min ago
+TriggeredBy: ● ssh.socket
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 1170 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 1172 (sshd)
+      Tasks: 1 (limit: 9505)
+     Memory: 5.4M (peak: 7.4M)
+        CPU: 1.022s
+     CGroup: /system.slice/ssh.service
+             └─1172 "sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups"
+
+Mar 08 07:19:45 vm-ubuntu-lab-johsgun sshd[1751]: Invalid user admin from 170.64.230.18 port 59836
+Mar 08 07:19:45 vm-ubuntu-lab-johsgun sshd[1751]: Connection closed by invalid user admin 170.64.230.18 port 59836 [preauth]
+Mar 08 07:21:56 vm-ubuntu-lab-johsgun sshd[1760]: Invalid user admin from 78.128.112.74 port 35886
+Mar 08 07:21:56 vm-ubuntu-lab-johsgun sshd[1760]: Connection closed by invalid user admin 78.128.112.74 port 35886 [preauth]
+Mar 08 07:23:48 vm-ubuntu-lab-johsgun sshd[1762]: Invalid user adm from 80.94.95.116 port 44780
+Mar 08 07:23:48 vm-ubuntu-lab-johsgun sshd[1762]: Connection closed by invalid user adm 80.94.95.116 port 44780 [preauth]
+Mar 08 07:35:15 vm-ubuntu-lab-johsgun sshd[1827]: Invalid user admin from 80.94.95.116 port 46726
+Mar 08 07:35:15 vm-ubuntu-lab-johsgun sshd[1827]: Connection closed by invalid user admin 80.94.95.116 port 46726 [preauth]
+Mar 08 07:46:43 vm-ubuntu-lab-johsgun sshd[1848]: Invalid user admin from 80.94.95.115 port 27664
+Mar 08 07:46:43 vm-ubuntu-lab-johsgun sshd[1848]: Connection closed by invalid user admin 80.94.95.115 port 27664 [preauth]
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ sudo systemctl status ssh 2>/dev/null || systemctl status sshd 2>/dev/null
+systemctl status networking 2>/dev/null || systemctl status NetworkManager 2>/dev/null^C
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ sudo su
+root@vm-ubuntu-lab-johsgun:/home/pioner/sys-admin-lab# systemctl status ssh 2>/dev/null || systemctl status sshd 2>/dev/null
+systemctl status networking 2>/dev/null || systemctl status NetworkManager 2>/dev/null
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/usr/lib/systemd/system/ssh.service; disabled; preset: enabled)
+     Active: active (running) since Sun 2026-03-08 06:44:39 UTC; 1h 11min ago
+TriggeredBy: ● ssh.socket
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 1170 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 1172 (sshd)
+      Tasks: 1 (limit: 9505)
+     Memory: 5.2M (peak: 7.4M)
+        CPU: 1.022s
+     CGroup: /system.slice/ssh.service
+             └─1172 "sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups"
+
+Mar 08 07:19:45 vm-ubuntu-lab-johsgun sshd[1751]: Invalid user admin from 170.64.230.18 port 59836
+Mar 08 07:19:45 vm-ubuntu-lab-johsgun sshd[1751]: Connection closed by invalid user admin 170.64.230.18 port 59836 [preauth]
+Mar 08 07:21:56 vm-ubuntu-lab-johsgun sshd[1760]: Invalid user admin from 78.128.112.74 port 35886
+Mar 08 07:21:56 vm-ubuntu-lab-johsgun sshd[1760]: Connection closed by invalid user admin 78.128.112.74 port 35886 [preauth]
+Mar 08 07:23:48 vm-ubuntu-lab-johsgun sshd[1762]: Invalid user adm from 80.94.95.116 port 44780
+Mar 08 07:23:48 vm-ubuntu-lab-johsgun sshd[1762]: Connection closed by invalid user adm 80.94.95.116 port 44780 [preauth]
+Mar 08 07:35:15 vm-ubuntu-lab-johsgun sshd[1827]: Invalid user admin from 80.94.95.116 port 46726
+Mar 08 07:35:15 vm-ubuntu-lab-johsgun sshd[1827]: Connection closed by invalid user admin 80.94.95.116 port 46726 [preauth]
+Mar 08 07:46:43 vm-ubuntu-lab-johsgun sshd[1848]: Invalid user admin from 80.94.95.115 port 27664
+Mar 08 07:46:43 vm-ubuntu-lab-johsgun sshd[1848]: Connection closed by invalid user admin 80.94.95.115 port 27664 [preauth]
+root@vm-ubuntu-lab-johsgun:/home/pioner/sys-admin-lab# exity
+exity: command not found
+root@vm-ubuntu-lab-johsgun:/home/pioner/sys-admin-lab# exti
+exti: command not found
+root@vm-ubuntu-lab-johsgun:/home/pioner/sys-admin-lab# exit
+exit
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ systemctl list-units --type=service --state=running | head -5
+  UNIT                        LOAD   ACTIVE SUB     DESCRIPTION
+  chrony.service              loaded active running chrony, an NTP client/server
+  cron.service                loaded active running Regular background program processing daemon
+  dbus.service                loaded active running D-Bus System Message Bus
+  getty@tty1.service          loaded active running Getty on tty1
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ systemctl list-units --type=service --state=active | head -5
+  UNIT                                                        LOAD   ACTIVE SUB     DESCRIPTION
+  apparmor.service                                            loaded active exited  Load AppArmor profiles
+  apport.service                                              loaded active exited  automatic crash report generation
+  blk-availability.service                                    loaded active exited  Availability of block devices
+  chrony.service                                              loaded active running chrony, an NTP client/server
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ which apache2 2>/dev/null || which httpd 2>/dev/null || echo "Apache not installed"
+Apache not installed
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ which nginx 2>/dev/null || echo "Nginx not installed"
+Nginx not installed
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ apt search apache2 2>/dev/null | head -5 || yum search httpd 2>/dev/null | head -5
+Sorting...
+Full Text Search...
+apache2/noble-updates,noble-security 2.4.58-1ubuntu8.10 amd64
+  Apache HTTP Server
+
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat > check-services.sh << EOF
+#!/bin/bash
+
+echo "=== Service Status Check ==="
+
+echo "SSH Service:"
+systemctl is-active ssh 2>/dev/null || systemctl is-active sshd 2>/dev/null || echo "SSH service not found"
+
+echo "Network Service:"
+systemctl is-active networking 2>/dev/null || systemctl is-active NetworkManager 2>/dev/null || echo "Network service not found"
+
+echo "System Time:"
+date
+EOF
+
+chmod +x check-services.sh
+./check-services.sh
+=== Service Status Check ===
+SSH Service:
+active
+Network Service:
+inactive
+inactive
+Network service not found
+System Time:
+Sun Mar  8 07:57:56 UTC 2026
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ./check-services.sh
+=== Service Status Check ===
+SSH Service:
+active
+Network Service:
+inactive
+inactive
+Network service not found
+System Time:
+Sun Mar  8 07:58:18 UTC 2026
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ip addr show | head -20
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 70:a8:a5:48:30:a6 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.0.4/24 metric 100 brd 10.0.0.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::72a8:a5ff:fe48:30a6/64 scope link 
+       valid_lft forever preferred_lft forever
+3: enP19396s1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master eth0 state UP group default qlen 1000
+    link/ether 70:a8:a5:48:30:a6 brd ff:ff:ff:ff:ff:ff
+    altname enP19396p0s2
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ip route show
+default via 10.0.0.1 dev eth0 proto dhcp src 10.0.0.4 metric 100 
+10.0.0.0/24 dev eth0 proto kernel scope link src 10.0.0.4 metric 100 
+10.0.0.1 dev eth0 proto dhcp scope link src 10.0.0.4 metric 100 
+168.63.129.16 via 10.0.0.1 dev eth0 proto dhcp src 10.0.0.4 metric 100 
+169.254.169.254 via 10.0.0.1 dev eth0 proto dhcp src 10.0.0.4 metric 100 
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ping -c 3 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=116 time=1.18 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=116 time=1.18 ms
+^C
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 1.175/1.178/1.181/0.003 ms
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ nslookup google.com 2>/dev/null || dig google.com 2>/dev/null || echo "DNS tools not available"
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	google.com
+Address: 142.250.75.142
+Name:	google.com
+Address: 2a00:1450:4028:805::200e
+
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ host google.com 2>/dev/null || echo "host command not available"
+google.com has address 142.250.75.142
+google.com has IPv6 address 2a00:1450:4028:805::200e
+google.com mail is handled by 10 smtp.google.com.
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ss -tlnp | head -10 2>/dev/null || netstat -tlnp | head -10 2>/dev/null
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+LISTEN 0      4096      127.0.0.54:53        0.0.0.0:*          
+LISTEN 0      4096   127.0.0.53%lo:53        0.0.0.0:*          
+LISTEN 0      4096         0.0.0.0:22        0.0.0.0:*          
+LISTEN 0      4096            [::]:22           [::]:*          
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ss -tlnp | grep :22 2>/dev/null || netstat -tlnp | grep :22 2>/dev/null
+LISTEN 0      4096         0.0.0.0:22        0.0.0.0:*          
+LISTEN 0      4096            [::]:22           [::]:*          
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat > network-check.sh << 'EOF'
+#!/bin/bash
+echo "=== Network Diagnostic Report ==="
+echo "Date: $(date)"
+echo ""
+echo "Network Interfaces:"
+ip addr show | grep -E "(inet |UP|DOWN)"
+echo ""
+echo "Default Gateway:"
+ip route | grep default
+echo ""
+echo "DNS Servers:"
+cat /etc/resolv.conf | grep nameserver
+echo ""
+echo "Internet Connectivity:"
+ping -c 2 8.8.8.8 > /dev/null 2>&1 && echo "✓ Internet accessible" || echo "✗ No internet access"
+EOF
+
+chmod +x network-check.sh
+./network-check.sh
+=== Network Diagnostic Report ===
+Date: Sun Mar  8 07:59:38 UTC 2026
+
+Network Interfaces:
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 10.0.0.4/24 metric 100 brd 10.0.0.255 scope global eth0
+3: enP19396s1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master eth0 state UP group default qlen 1000
+
+Default Gateway:
+default via 10.0.0.1 dev eth0 proto dhcp src 10.0.0.4 metric 100 
+
+DNS Servers:
+nameserver 127.0.0.53
+
+Internet Connectivity:
+✓ Internet accessible
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ sudo mkdir -p /var/www/html
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ sudo chown -R $USER:$USER /var/www/html 2>/dev/null || sudo chown -R $USER /var/www/html
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat > /var/www/html/index.html << 'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body>
+    <h1>Hello from Linux Lab!</h1>
+    <p>This is a test page for tomorrow's Apache lab.</p>
+    <p>Current time: <script>document.write(new Date());</script></p>
+</body>
+</html>
+EOF
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ chmod 644 /var/www/html/index.html
+ls -la /var/www/html/
+total 12
+drwxr-xr-x 2 pioner pioner 4096 Mar  8 08:01 .
+drwxr-xr-x 3 root   root   4096 Mar  8 07:59 ..
+-rw-r--r-- 1 pioner pioner  253 Mar  8 08:01 index.html
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat /var/www/html/index.html
+ 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body>
+    <h1>Hello from Linux Lab!</h1>
+    <p>This is a test page for tomorrow's Apache lab.</p>
+    <p>Current time: <script>document.write(new Date());</script></p>
+</body>
+</html>
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ ls -la /var/www/html/index.html
+-rw-r--r-- 1 pioner pioner 253 Mar  8 08:01 /var/www/html/index.html
+pioner@vm-ubuntu-lab-johsgun:~/sys-admin-lab$ cat > lab3-summary.txt << EOF
+=== Lab 3 Summary ===
+Date: $(date)
+User: $(whoami)
+System: $(uname -a)
+
+Tools Installed:
+- htop: $(command -v htop)
+- curl: $(command -v curl)
+- wget: $(command -v wget)
+- tree: $(command -v tree)
+
+Key Commands Learned:
+- System monitoring: free, df, uptime, ps, htop
+- Package management: apt/yum install, search
+- Process management: jobs, fg, bg, kill
+- Service management: systemctl status
+- Network diagnostics: ip, ping, ss/netstat
+
+Web Server Preparation:
+- Created /var/www/html directory
+- Created test index.html file
+- Ready for Apache installation tomorrow
+EOF
+
+cat lab3-summary.txt
+=== Lab 3 Summary ===
+Date: Sun Mar  8 08:02:48 UTC 2026
+User: pioner
+System: Linux vm-ubuntu-lab-johsgun 6.17.0-1008-azure #8~24.04.1-Ubuntu SMP Mon Jan 26 18:35:40 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+
+Tools Installed:
+- htop: /usr/bin/htop
+- curl: /usr/bin/curl
+- wget: /usr/bin/wget
+- tree: /usr/bin/tree
+
+Key Commands Learned:
+- System monitoring: free, df, uptime, ps, htop
+- Package management: apt/yum install, search
+- Process management: jobs, fg, bg, kill
+- Service management: systemctl status
+- Network diagnostics: ip, ping, ss/netstat
+
+Web Server Preparation:
+- Created /var/www/html directory
+- Created test index.html file
+- Ready for Apache installation tomorrow
